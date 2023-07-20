@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -5,13 +6,41 @@ import {
   TextInput,
   SafeAreaView,
   TouchableOpacity,
-  ImageBackground,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  Pressable,
 } from "react-native";
+import { ValidateEmail } from "../../helpers/validate";
 
-export default function RegistrationScreen(params) {
+export default function LoginScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isHiddenPass, setIsHiddenPass] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(true);
+
+  const resetForm = () => {
+    setEmail('');
+    setPassword('');
+  }
+
+  const checkEmail = () =>{
+    email !== '' && !ValidateEmail(email) ? setIsValidEmail(false) : setIsValidEmail(true)
+  }
+
+  const handleBtn = () => {
+    Keyboard.dismiss();
+    if ( email === '' || password === '' || !ValidateEmail(email)) {
+      return
+    }
+    
+    const formData = {
+      email,
+      password
+    }
+    console.log(formData);
+    resetForm()
+  }
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
@@ -19,58 +48,45 @@ export default function RegistrationScreen(params) {
       <View style={styles.container}>
         <View style={styles.formContainer}>
 
-          <View style={styles.imgWrap}>
-            <TouchableOpacity style={styles.addBtn}>
-              <ImageBackground
-                source={require("../assets/imgs/add.png")}
-                resizeMode="cover"
-                style={styles.addBtnBg}></ImageBackground>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.formTitle}>Реєстрація</Text>
+          <Text style={styles.formTitle}>Увійти</Text>
 
           <SafeAreaView>
             <View style={styles.inputWrap}>
               <TextInput
-                style={styles.input}
-                //onChangeText={onChangeNumber}
-                //value=""
-                placeholder="Логін"
-                placeholderTextColor="#BDBDBD"
-                keyboardType="default"
-                selectTextOnFocus={false}
-              />
-            </View>
-
-            <View style={styles.inputWrap}>
-              <TextInput
-                style={styles.input}
-                //onChangeText={onChangeNumber}
-                //value=""
+                style={{
+                  ...styles.input,
+                  borderColor: isValidEmail ? "#E8E8E8" : "red",
+                }}
+                onChangeText={(e) => {setEmail(e)}}
+                onEndEditing={checkEmail}
+                value={email}
                 placeholder="Адреса електронної пошти"
                 placeholderTextColor="#BDBDBD"
                 keyboardType="email-address"
-              />
+                />
+                {!isValidEmail && <Text style={styles.inputError}>некоректний email</Text>}
             </View>
 
             <View style={styles.inputWrap}>
               <TextInput
                 style={styles.input}
-                //onChangeText={onChangeNumber}
-                //value=""
+                onChangeText={(e) => {setPassword(e)}}
+                value={password}
                 placeholder="Пароль"
                 placeholderTextColor="#BDBDBD"
                 keyboardType="default"
-              />
-              <Text style={styles.inputText}>Показати</Text>
+                secureTextEntry={isHiddenPass}
+                />
+                <Pressable style={styles.inputTextBtn} onPress={() => {setIsHiddenPass(!isHiddenPass)}}>
+                  <Text style={styles.inputText}>{isHiddenPass ? 'Показати' : 'Приховати'}</Text>
+                </Pressable>
             </View>
 
-            <TouchableOpacity style={styles.button} >
-              <Text style={styles.buttonText}>Зареєстуватися</Text>
+            <TouchableOpacity style={styles.button} onPress={handleBtn}>
+              <Text style={styles.buttonText}>Увійти</Text>
             </TouchableOpacity>
 
-            <Text style={styles.textLink}>Вже є акаунт? Увійти</Text>
+            <Text style={styles.textLink}>Немає акаунту? Зареєструватися</Text>
           </SafeAreaView>
 
         </View>
@@ -87,35 +103,11 @@ const styles = StyleSheet.create({
   },
 
   formContainer: {
-    paddingTop:92,
+    paddingTop:32,
     backgroundColor: '#ffffff',
     paddingBottom: 20,
-    marginTop:60
   },
 
-    imgWrap: {
-      width: 120,
-      height: 120,
-      backgroundColor: '#F6F6F6',
-      position: 'absolute',
-      top: -60,
-      alignSelf: "center",
-      borderRadius: 16,
-    },
-
-      addBtn: {
-        position: "absolute",
-        bottom: 14,
-        right: -12,
-        width: 25,
-        height: 25,
-      },
-
-        addBtnBg: {
-          flex: 1,
-          justifyContent: 'center',
-        },
-  
   formTitle: {
     fontFamily: "Roboto",
     fontSize: 30,
@@ -141,12 +133,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
   },
 
-  inputText: {
+  inputTextBtn: {
     position: "absolute",
+    right: 16,
+  },
+
+  inputText: {
     fontFamily: "Roboto",
     fontSize: 16,
     color: "#1B4371",
-    right: 16,
+  },
+
+  inputError: {
+    fontFamily: "Roboto",
+    fontSize: 14,
+    color: "red",
+    position: "absolute",
+    left:15,
+    bottom:1
   },
 
   button: {

@@ -1,8 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import { useFonts } from "expo-font";
-import RegistrationScreen from "./components/RegistrationScreen";
-import LoginScreen from "./components/LoginScreen";
+import RegistrationScreen from "./Screens/auth/RegistrationScreen";
+import LoginScreen from "./Screens/auth/LoginScreen";
 import PostsScreen from "./Screens/PostsScreen";
 
 export default function App() {
@@ -23,8 +23,8 @@ export default function App() {
           style={styles.bgImages}
           imageStyle={styles.image}
         >
-          <RegistrationScreen />
-          {/* <LoginScreen /> */}
+          {/*<RegistrationScreen />*/}
+          <LoginScreen />
         </ImageBackground>
         {/* <PostsScreen /> */}
       </View>
