@@ -1,28 +1,42 @@
 import {
   StyleSheet,
   View,
-  KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ImageBackground
 } from "react-native";
 import RegistrationForm from "../../components/RegistrationForm";
 
-export default function RegistrationScreen() {
+export default function RegistrationScreen({navigation}) {
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <RegistrationForm/>
+        <ImageBackground
+          source={require("../../assets/imgs/PhotoBG.jpg")}
+          style={styles.bgImages}
+          imageStyle={styles.image}
+        >
+          <RegistrationForm navigation={navigation} />
+        </ImageBackground>
       </View>
       </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end',
+    backgroundColor: "#fff",
+    
   },
+  bgImages: {
+    flex: 1,
+    justifyContent: 'flex-end'
+  },
+  image: {
+    resizeMode:'cover',
+    width:'100%',
+    height:'100%'
+  }
 })

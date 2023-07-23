@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,14 +8,17 @@ import {
   TouchableOpacity,
   Keyboard,
   Pressable,
+  KeyboardAvoidingView
 } from "react-native";
+import { authContext } from "../authContext";
 import { ValidateEmail } from "../helpers/validate";
 
-export default function LoginForm() {
+export default function LoginForm({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isHiddenPass, setIsHiddenPass] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
+  const{setIsAuth} = useContext(authContext);
 
   const resetForm = () => {
     setEmail('');
@@ -38,61 +41,62 @@ export default function LoginForm() {
     }
     console.log(formData);
     resetForm();
+    setIsAuth(true);
   }
 
   return (
-    <View style={styles.formContainer}>
-      <Text style={styles.formTitle}>Увійти</Text>
+    <View style={styles.formContainer}>            
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <Text style={styles.formTitle}>Увійти</Text>
 
-      <SafeAreaView>
-        <View style={styles.inputWrap}>
-          <TextInput
-            style={{
-              ...styles.input,
-              borderColor: isValidEmail ? "#E8E8E8" : "red",
-            }}
-            onChangeText={(e) => {setEmail(e)}}
-            onEndEditing={checkEmail}
-            value={email}
-            placeholder="Адреса електронної пошти"
-            placeholderTextColor="#BDBDBD"
-            keyboardType="email-address"
-            />
-            {!isValidEmail && <Text style={styles.inputError}>некоректний email</Text>}
-        </View>
+        <SafeAreaView>
+          <View style={styles.inputWrap}>
+            <TextInput
+              style={{
+                ...styles.input,
+                borderColor: isValidEmail ? "#E8E8E8" : "red",
+              }}
+              onChangeText={(e) => {setEmail(e)}}
+              onEndEditing={checkEmail}
+              value={email}
+              placeholder="Адреса електронної пошти"
+              placeholderTextColor="#BDBDBD"
+              keyboardType="email-address"
+              />
+              {!isValidEmail && <Text style={styles.inputError}>некоректний email</Text>}
+          </View>
 
-        <View style={styles.inputWrap}>
-          <TextInput
-            style={styles.input}
-            onChangeText={(e) => {setPassword(e)}}
-            value={password}
-            placeholder="Пароль"
-            placeholderTextColor="#BDBDBD"
-            keyboardType="default"
-            secureTextEntry={isHiddenPass}
-            />
-            <Pressable style={styles.inputTextBtn} onPress={() => {setIsHiddenPass(!isHiddenPass)}}>
-              <Text style={styles.inputText}>{isHiddenPass ? 'Показати' : 'Приховати'}</Text>
-            </Pressable>
-        </View>
+          <View style={styles.inputWrap}>
+            <TextInput
+              style={styles.input}
+              onChangeText={(e) => {setPassword(e)}}
+              value={password}
+              placeholder="Пароль"
+              placeholderTextColor="#BDBDBD"
+              keyboardType="default"
+              secureTextEntry={isHiddenPass}
+              />
+              <Pressable style={styles.inputTextBtn} onPress={() => {setIsHiddenPass(!isHiddenPass)}}>
+                <Text style={styles.inputText}>{isHiddenPass ? 'Показати' : 'Приховати'}</Text>
+              </Pressable>
+          </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleBtn}>
-          <Text style={styles.buttonText}>Увійти</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleBtn}>
+            <Text style={styles.buttonText}>Увійти</Text>
+          </TouchableOpacity>
 
-        <Text style={styles.textLink}>Немає акаунту? Зареєструватися</Text>
-      </SafeAreaView>
-
+          <TouchableOpacity onPress={() => {navigation.navigate('Registration')} }>
+            <Text style={styles.textLink}>Немає акаунту? Зареєструватися</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-
   formContainer: {
     paddingTop:32,
     backgroundColor: '#ffffff',

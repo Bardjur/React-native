@@ -1,44 +1,53 @@
 import { StatusBar } from "expo-status-bar";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import { useFonts } from "expo-font";
+import { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from '@react-navigation/stack';
+import {authContext} from "./authContext";
+
+//Screens
 import RegistrationScreen from "./Screens/auth/RegistrationScreen";
 import LoginScreen from "./Screens/auth/LoginScreen";
-import PostsScreen from "./Screens/PostsScreen";
+import Home from "./Screens/Home";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
     Roboto: require("./assets/fonts/Roboto-Regular.ttf"),
   });
+  const [isAuth, setIsAuth] = useState(true);
 
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <>
-      <StatusBar barStyle="default" />
-      <View style={styles.container}>
-        <ImageBackground
-          source={require("./assets/imgs/PhotoBG.jpg")}
-          style={styles.bgImages}
-          imageStyle={styles.image}
-        >
-          {/*<RegistrationScreen />*/}
-          <LoginScreen />
-        </ImageBackground>
-        {/* <PostsScreen /> */}
-      </View>
-    </>
+    <authContext.Provider value={{setIsAuth}}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          { isAuth ? (
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{headerShown:false}} 
+            />
+          ) : (
+            <>
+              <Stack.Screen 
+                name="Registration" 
+                component={RegistrationScreen} 
+                options={{headerShown:false}} 
+              />
+              <Stack.Screen 
+                name="Login" 
+                component={LoginScreen}
+                options={{headerShown:false}} 
+              />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </authContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  bgImages: {
-    flex: 1,
-  },
-  image: {},
-});
