@@ -17,9 +17,8 @@ export default function CreatePostsCamera({setPhoto, photo}) {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
-      console.log(snap);
     })();
-  },[snap]);
+  }, []);
 
   const takePhoto = async () => {
     const photo = await snap.takePictureAsync();
