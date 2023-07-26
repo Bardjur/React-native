@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-import PostItem from "../components/PostItem";
+import PostItemCopy from "../components/PostItemCopy";
 
 export default function ProfileScreen() {
   const { setIsAuth } = useContext(authContext);
@@ -46,9 +46,9 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView style={styles.postsWrap}>
-        <PostItem />
-        <PostItem />
-        <PostItem />
+        <PostItemCopy />
+        <PostItemCopy />
+        <PostItemCopy />
       </ScrollView>
     </View>
   )

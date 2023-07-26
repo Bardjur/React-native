@@ -1,64 +1,66 @@
+import {authContext} from "../../authContext";
+import { useContext } from 'react';
 import {
   StyleSheet,
-  Text,
-  View,
-  Image,
+  TouchableOpacity
 } from "react-native";
+import { createStackNavigator } from '@react-navigation/stack';
+import DefaultPostsScreen from "./nestedScreen/DefaultPostScreen";
+import CommentsScreen from "./nestedScreen/CommentsScreen";
+import MapScreen from "./nestedScreen/MapScreen";
+import { MaterialIcons } from '@expo/vector-icons'; 
+
+const Nested = createStackNavigator();
 
 export default function PostsScreen() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.mainBlock}>
-        <View style={styles.authorBlock}>
-          <View style={styles.authorImgWrap}>
-            <Image source={require('../../assets/imgs/Rectangle22.png')} />
-          </View>
-          <View>
-            <Text style={styles.authorTextName}>Natali Romanova</Text>
-            <Text style={styles.authorTextMail}>email@example.com</Text>
-          </View>
-        </View>
-      </View>
+  const {setIsAuth} = useContext(authContext);
 
-    </View>
+  return (
+    <Nested.Navigator
+      screenOptions={{
+        headerStyle: {borderBottomWidth: 1,},
+        headerTitleAlign: "center",
+        headerTitleStyle:styles.headTitle,
+      }}
+    >
+      <Nested.Screen
+        name="defaultPostsScreen"
+        component={DefaultPostsScreen}
+        options={{
+          headerTitle: "Публікації",
+          headerRight: () => (
+            <TouchableOpacity  style={styles.logout} onPress={()=> {setIsAuth(false)}}>
+              <MaterialIcons name="logout" size={25} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Nested.Screen
+        name="comments"
+        component={CommentsScreen} 
+        options={{
+          headerTitle: "Коментарі", 
+        }}
+      />
+      <Nested.Screen
+        name="map"
+        component={MapScreen}
+        options={{
+          headerTitle:"Карта", 
+        }}
+      />
+    </Nested.Navigator>
   )
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-
-
-
-  mainBlock: {
-    paddingTop: 32,
-    paddingHorizontal: 16,
-  },
-
-  authorBlock: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  authorImgWrap: {
-    width: 60,
-    height: 60,
-    overflow: "hidden",
-    borderRadius: 16,
-    marginRight: 8,
-  },
-
-  authorTextName: {
+  headTitle: {
     fontFamily: "Roboto",
-    fontWeight: 700,
-    fontSize: 13,
+    fontWeight: 500,
+    fontSize: 17,
+    color: "#212121",
   },
 
-  authorTextMail: {
-    fontFamily: "Roboto",
-    fontSize: 11,
+  logout: {
+    marginRight:10,
   },
-
 });

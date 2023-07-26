@@ -2,8 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from '@react-navigation/stack';
-import {authContext} from "./authContext";
+import { createStackNavigator } from "@react-navigation/stack";
+import { authContext } from "./authContext";
 
 //Screens
 import RegistrationScreen from "./Screens/auth/RegistrationScreen";
@@ -23,26 +23,26 @@ export default function App() {
   }
 
   return (
-    <authContext.Provider value={{setIsAuth}}>
+    <authContext.Provider value={{ setIsAuth }}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
-          { isAuth ? (
+          {isAuth ? (
             <Stack.Screen
               name="Home"
               component={Home}
-              options={{headerShown:false}} 
+              options={{ headerShown: false }}
             />
           ) : (
             <>
-              <Stack.Screen 
-                name="Registration" 
-                component={RegistrationScreen} 
-                options={{headerShown:false}} 
+              <Stack.Screen
+                name="Registration"
+                component={RegistrationScreen}
+                options={{ headerShown: false }}
               />
-              <Stack.Screen 
-                name="Login" 
+              <Stack.Screen
+                name="Login"
                 component={LoginScreen}
-                options={{headerShown:false}} 
+                options={{ headerShown: false }}
               />
             </>
           )}

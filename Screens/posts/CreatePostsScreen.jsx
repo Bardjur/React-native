@@ -1,76 +1,50 @@
 import {
   StyleSheet,
-  Text,
-  TextInput,
   View,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
-import { FontAwesome, Octicons, Feather} from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
+import CreatePostForm from "../../components/createPostForm";
+import CreatePostsCamera from "../../components/createPostCamera";
 
-export default function CreatePostsScreen() {
+export default function CreatePostsScreen({navigation}) {
   const [isKeyboardShow, setIsKeyboardShow] = useState(false);
-  const hideKeyboard = () => {
-    Keyboard.dismiss();
-  }
+  const [photo, setPhoto] = useState(null)
 
   useEffect(() => {
     const hideKeyboard = Keyboard.addListener('keyboardDidHide', () => {
       setIsKeyboardShow(false);
-    });
-
+  });
     return () => {
       hideKeyboard.remove();
     };
   }, []);
 
+  const handleSubmit = (data) => {
+    navigation.navigate('defaultPostsScreen', {...data, photo});
+    setPhoto(null);
+  }
+  
   return (
-    <TouchableWithoutFeedback onPress={hideKeyboard}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
-      <View>
-        <View style={styles.photoWrap}>
-          <TouchableOpacity style={styles.photoBtn}>
-            <FontAwesome name="camera" size={24} color="#BDBDBD" />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.text}>Завантажте фото</Text>
-      </View>
+      <CreatePostsCamera setPhoto={setPhoto} photo={photo}/>
 
-      <KeyboardAvoidingView
-        behavior={'position'}
-        contentContainerStyle={{backgroundColor:"#fff",}}
-      >
-        <View style={{marginTop:16}}>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#BDBDBD"
-            placeholder="Назва..."
-            onFocus={() => { setIsKeyboardShow(true)}}
-          />
-        </View>
+      <CreatePostForm setIsKeyboardShow={setIsKeyboardShow} disabled={!photo} onSubmit={handleSubmit}/>
 
-        <View style={{marginTop:16}}>
-          <TextInput
-            style={[styles.input, { paddingLeft: 28 }]}
-            placeholderTextColor="#BDBDBD"
-            placeholder="Місцевість..."
-            onFocus={() => { setIsKeyboardShow(true)}}
-          />
-          <TouchableOpacity style={styles.locationBtn} onPress={() => {}}>
-            <Octicons name="location" size={24} color="#BDBDBD" />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Опубліковати</Text>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
-
-      <TouchableOpacity activeOpacity={.6} style={[styles.clearForm,{marginTop: isKeyboardShow? 0 : "auto"}]} onPress={() => {}}>
-        <Feather name="trash-2" size={24} color="#BDBDBD" />
+      <TouchableOpacity 
+        disabled={!photo}
+        activeOpacity={.6}
+        style={{
+          ...styles.clearSnap,
+          backgroundColor:photo ? "#FF6C00":"#F6F6F6",
+          marginTop: isKeyboardShow ? 0 : "auto"
+        }}
+        onPress={() => {setPhoto(null)}}>
+        <Feather name="trash-2" size={24} color={ photo? "#fff" :"#BDBDBD"} />
       </TouchableOpacity>
       
     </View>
@@ -87,60 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 
-  photoWrap: {
-    backgroundColor: "#F6F6F6",
-    aspectRatio: 1.43,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  photoBtn: {
-    width: 60,
-    height: 60,
-    backgroundColor: "rgba(255, 255, 255, .7)",
-    borderRadius: 60,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  text: {
-    marginTop: 8,
-    fontSize: 16,
-    fontFamily: "Roboto",
-    color: "#BDBDBD",
-  },
-
-  input: {
-    fontSize: 16,
-    fontFamily: "Roboto",
-    color: "#212121",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8E8E8",
-    paddingVertical: 10,
-  },
-
-  locationBtn: {
-    position: "absolute",
-    bottom: 10,
-  },
-
-  button: {
-    backgroundColor: "#FF6C00",
-    borderRadius: 100,
-    marginTop: 16,
-  },
-
-  buttonText: {
-    padding: 16,
-    fontSize: 16,
-    fontFamily: "Roboto",
-    color: "#FFFFFF",
-    textAlign: "center",
-  },
-
-  clearForm: {
+  clearSnap: {
     marginTop:"auto",
     maxWidth:70,
     width: 70,
