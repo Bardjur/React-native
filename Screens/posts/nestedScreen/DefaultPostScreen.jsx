@@ -6,17 +6,33 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import PostItem from "../../../components/PostItem"
+import PostItem from "../../../components/PostItem";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../redux/auth/selectors";
+import { collection, onSnapshot } from 'firebase/firestore'; 
+import { db } from "../../../firebase/config";
 
-export default function DefaultPostsScreen({navigation, route}) {
+export default function DefaultPostsScreen({ navigation }) {
+  const { name, email } = useSelector(selectUser);
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevPosts) => [...prevPosts, route.params])
+  const getPosts = async () => {
+    try {
+      await onSnapshot(collection(db, 'posts'), (snapshot) => {
+        const posts = snapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+        setPosts(posts);
+      })
+    } catch (error) {
+      console.log(error);
     }
-  }, [route.params]);
-  
+  }
+  useEffect(() => {
+    getPosts()
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.mainBlock}>
@@ -25,14 +41,14 @@ export default function DefaultPostsScreen({navigation, route}) {
             <Image source={require('../../../assets/imgs/Rectangle22.png')} />
           </View>
           <View>
-            <Text style={styles.authorTextName}>Natali Romanova</Text>
-            <Text style={styles.authorTextMail}>email@example.com</Text>
+            <Text style={styles.authorTextName}>{name}</Text>
+            <Text style={styles.authorTextMail}>{email}</Text>
           </View>
         </View>
         <FlatList
           data={posts}
           renderItem={({ item }) => { return (<PostItem postData={item} navigation={navigation} />)}}
-          keyExtractor={(_, idx) => idx.toString()}
+          keyExtractor={(item) => item.id}
         />
       </View>
     </View>

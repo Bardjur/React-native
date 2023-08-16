@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,22 +8,19 @@ import {
   TouchableOpacity,
   Keyboard,
   Pressable,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from "react-native";
-import { authContext } from "../authContext";
 import { ValidateEmail } from "../helpers/validate";
+import { useDispatch } from "react-redux";
+import { logIn } from "../redux/auth/operations";
 
 export default function LoginForm({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isHiddenPass, setIsHiddenPass] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
-  const{setIsAuth} = useContext(authContext);
 
-  const resetForm = () => {
-    setEmail('');
-    setPassword('');
-  }
+  const dispatch = useDispatch();
 
   const checkEmail = () =>{
     email !== '' && !ValidateEmail(email) ? setIsValidEmail(false) : setIsValidEmail(true)
@@ -39,9 +36,8 @@ export default function LoginForm({navigation}) {
       email,
       password
     }
-    console.log(formData);
-    resetForm();
-    setIsAuth(true);
+    
+    dispatch(logIn(formData));
   }
 
   return (
@@ -61,6 +57,7 @@ export default function LoginForm({navigation}) {
               onChangeText={(e) => {setEmail(e)}}
               onEndEditing={checkEmail}
               value={email}
+              type="email"
               placeholder="Адреса електронної пошти"
               placeholderTextColor="#BDBDBD"
               keyboardType="email-address"
@@ -169,5 +166,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     fontFamily: "Roboto",
-  }
+  },
 })

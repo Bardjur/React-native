@@ -6,23 +6,28 @@ import {
   ImageBackground,
 } from "react-native";
 import LoginForm from "../../components/LoginForm";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useSelector } from "react-redux";
+import { selectIsLoading } from "../../redux/auth/selectors";
 
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({ navigation }) {
+  const isLoading = useSelector(selectIsLoading);
 
   return (
-    
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <ImageBackground
-            source={require("../../assets/imgs/PhotoBG.jpg")}
-            style={styles.bgImages}
-            imageStyle={styles.image}
-          >
-            <LoginForm navigation={navigation} />
-          </ImageBackground>
-        </View>
-      </TouchableWithoutFeedback>
-    
+  <>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require("../../assets/imgs/PhotoBG.jpg")}
+          style={styles.bgImages}
+          imageStyle={styles.image}
+        >
+          <LoginForm navigation={navigation} />
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
+    {isLoading && <LoadingSpinner/>}
+  </>
   )
 }
 

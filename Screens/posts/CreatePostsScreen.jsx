@@ -7,12 +7,22 @@ import {
 } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
-import CreatePostForm from "../../components/createPostForm";
-import CreatePostsCamera from "../../components/createPostCamera";
+import CreatePostForm from "../../components/CreatePostForm";
+import CreatePostsCamera from "../../components/CreatePostCamera";
+import { storage, db } from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../redux/auth/selectors";
+import LoadingSpinner from "../../components/LoadingSpinner";
+
+
 
 export default function CreatePostsScreen({navigation}) {
   const [isKeyboardShow, setIsKeyboardShow] = useState(false);
-  const [photo, setPhoto] = useState(null)
+  const [photo, setPhoto] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const {userId, name:userName} = useSelector(selectUser);
 
   useEffect(() => {
     const hideKeyboard = Keyboard.addListener('keyboardDidHide', () => {
@@ -24,10 +34,39 @@ export default function CreatePostsScreen({navigation}) {
   }, []);
 
   const handleSubmit = (data) => {
-    navigation.navigate('defaultPostsScreen', {...data, photo});
+    setIsLoading(true);
+    uploadPost(data);
+    navigation.navigate('defaultPostsScreen');
     setPhoto(null);
   }
-  
+
+  const uploadPhoto = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const imgId = Date.now().toString();
+
+    const storageRef = await ref(storage, `picture/${imgId}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(ref(storage, `picture/${imgId}`))
+  }
+
+  const uploadPost = async (data) => {
+    photoUrl = await uploadPhoto();
+    try {
+      const docRef = await addDoc(collection(db, 'posts'), {
+        userId,
+        userName,
+        photo: photoUrl,
+        ...data,
+      });
+      console.log('Document written with ID: ', docRef.id);
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    } finally {setIsLoading(false);}
+  }
+
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
@@ -46,10 +85,9 @@ export default function CreatePostsScreen({navigation}) {
         onPress={() => {setPhoto(null)}}>
         <Feather name="trash-2" size={24} color={ photo? "#fff" :"#BDBDBD"} />
       </TouchableOpacity>
-      
+      {isLoading && <LoadingSpinner/>}
     </View>
     </TouchableWithoutFeedback>
-    
   )
 }
 

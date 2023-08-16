@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 import { ValidateEmail } from "../helpers/validate";
+import { useDispatch } from "react-redux";
+import { register } from "../redux/auth/operations";
 
 export default function RegistrationForm({navigation}) {
   const [name, setName] = useState('');
@@ -19,6 +21,7 @@ export default function RegistrationForm({navigation}) {
   const [password, setPassword] = useState('');
   const [isHiddenPass, setIsHiddenPass] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
+  const dispatch = useDispatch();
 
   const resetForm = () => {
     setName('');
@@ -42,7 +45,7 @@ export default function RegistrationForm({navigation}) {
       password
     }
 
-    console.log(formData);
+    dispatch(register(formData));
     resetForm();
   }
 
@@ -68,6 +71,7 @@ export default function RegistrationForm({navigation}) {
               style={styles.input}
               onChangeText={(e) => {setName(e)}}
               value={name}
+              type="email"
               placeholder="Логін"
               placeholderTextColor="#BDBDBD"
               keyboardType="default"
@@ -96,6 +100,7 @@ export default function RegistrationForm({navigation}) {
               style={styles.input}
               onChangeText={(e) => {setPassword(e)}}
               value={password}
+              secureTextEntry={isHiddenPass}
               placeholder="Пароль"
               placeholderTextColor="#BDBDBD"
               keyboardType="default"

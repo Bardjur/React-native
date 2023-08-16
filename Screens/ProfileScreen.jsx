@@ -1,5 +1,3 @@
-import {authContext} from "../authContext";
-import { useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,14 +6,43 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-import PostItemCopy from "../components/PostItemCopy";
+import PostItem from "../components/PostItem";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "../redux/auth/operations";
+import { selectUser } from "../redux/auth/selectors";
+import { collection, onSnapshot,  query, where } from 'firebase/firestore'; 
+import { db } from "../firebase/config";
+import { useEffect, useState } from "react";
 
-export default function ProfileScreen() {
-  const { setIsAuth } = useContext(authContext);
-  
+export default function ProfileScreen({ navigation }) {
+  const { name, userId } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    getPosts()
+  }, []);
+
+  const getPosts = async () => {
+    try {
+      const ref = collection(db, 'posts')
+      const q = query(ref, where("userId", "==", userId));
+      await onSnapshot(q, (snapshot) => {
+        const posts = snapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+        setPosts(posts);
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.userWrap}>
@@ -36,20 +63,22 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           </View>
             
-          <TouchableOpacity  style={styles.logout} onPress={()=> {setIsAuth(false)}}>
+          <TouchableOpacity  style={styles.logout} onPress={() => dispatch(logOut())}>
             <MaterialIcons name="logout" size={25} color="#BDBDBD"/>
           </TouchableOpacity>
 
-          <Text style={styles.avatarText}>User Name</Text>
+          <Text style={styles.avatarText}>{name}</Text>
         </View>
       </ImageBackground>
       </View>
 
-      <ScrollView style={styles.postsWrap}>
-        <PostItemCopy />
-        <PostItemCopy />
-        <PostItemCopy />
-      </ScrollView>
+      <FlatList
+          data={posts}
+          renderItem={({ item }) => { return (<PostItem postData={item} navigation={navigation} />)}}
+          keyExtractor={(item) => item.id}
+          style={styles.postsWrap}
+        />
+
     </View>
   )
 }

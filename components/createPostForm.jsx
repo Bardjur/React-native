@@ -11,7 +11,7 @@ import { useState } from "react";
 import * as Location from "expo-location";
 
 export default function createPostForm({setIsKeyboardShow, onSubmit, disabled}) {
-  const [name, setName] = useState('');
+  const [caption, setCaption] = useState('');
   const [locationName, setLocationName] = useState('');
 
   const  getLocation = async () => {
@@ -31,8 +31,8 @@ export default function createPostForm({setIsKeyboardShow, onSubmit, disabled}) 
   
   const handlePress = async () => {
     const location = await getLocation();
-    onSubmit({name, locationName, location})
-    setName('');
+    onSubmit({caption, locationName, location})
+    setCaption('');
     setLocationName('');
   }
 
@@ -47,8 +47,8 @@ export default function createPostForm({setIsKeyboardShow, onSubmit, disabled}) 
         placeholderTextColor="#BDBDBD"
         placeholder="Назва..."
         onFocus={() => { setIsKeyboardShow(true)}}
-        value={name}
-        onChangeText={(e)=>{setName(e)}}
+        value={caption}
+        onChangeText={(e)=>{setCaption(e)}}
       />
     </View>
 

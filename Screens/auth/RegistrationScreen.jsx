@@ -6,9 +6,13 @@ import {
   ImageBackground
 } from "react-native";
 import RegistrationForm from "../../components/RegistrationForm";
+import { useSelector } from "react-redux";
+import { selectIsLoading } from "../../redux/auth/selectors";
 
-export default function RegistrationScreen({navigation}) {
+export default function RegistrationScreen({ navigation }) {
+  const isLoading = useSelector(selectIsLoading);
   return (
+    <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <ImageBackground
@@ -20,7 +24,8 @@ export default function RegistrationScreen({navigation}) {
         </ImageBackground>
       </View>
       </TouchableWithoutFeedback>
-
+      {isLoading && <LoadingSpinner/>}
+    </>
   )
 }
 

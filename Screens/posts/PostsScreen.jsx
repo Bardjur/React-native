@@ -1,5 +1,3 @@
-import {authContext} from "../../authContext";
-import { useContext } from 'react';
 import {
   StyleSheet,
   TouchableOpacity
@@ -9,12 +7,13 @@ import DefaultPostsScreen from "./nestedScreen/DefaultPostScreen";
 import CommentsScreen from "./nestedScreen/CommentsScreen";
 import MapScreen from "./nestedScreen/MapScreen";
 import { MaterialIcons } from '@expo/vector-icons'; 
+import { useDispatch } from "react-redux";
+import { logOut } from "../../redux/auth/operations";
 
 const Nested = createStackNavigator();
 
 export default function PostsScreen() {
-  const {setIsAuth} = useContext(authContext);
-
+  const dispatch = useDispatch();
   return (
     <Nested.Navigator
       screenOptions={{
@@ -29,7 +28,7 @@ export default function PostsScreen() {
         options={{
           headerTitle: "Публікації",
           headerRight: () => (
-            <TouchableOpacity  style={styles.logout} onPress={()=> {setIsAuth(false)}}>
+            <TouchableOpacity  style={styles.logout} onPress={() => dispatch(logOut())}>
               <MaterialIcons name="logout" size={25} />
             </TouchableOpacity>
           ),
@@ -39,7 +38,11 @@ export default function PostsScreen() {
         name="comments"
         component={CommentsScreen} 
         options={{
+          headerStatusBarHeight: -5,
           headerTitle: "Коментарі", 
+          headerLeftContainerStyle: {
+            justifyContent:"flex-end",
+          },
         }}
       />
       <Nested.Screen

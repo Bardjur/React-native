@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { FontAwesome, AntDesign, Octicons} from '@expo/vector-icons';
 
-export default function PostItem({navigation, postData:{ location, locationName, name, photo, like = 0, comments = 0 }}) {
+export default function PostItem({navigation, postData:{ location, locationName, caption, photo, like = 0,  id }}) {
   return (
     <View style={styles.container}>
       <View style={styles.photoWrap}>
@@ -16,11 +16,10 @@ export default function PostItem({navigation, postData:{ location, locationName,
           style={styles.photo}
         />
       </View>
-      <Text style={styles.title}>{ name }</Text>
+      <Text style={styles.title}>{ caption }</Text>
       <View style={styles.interactionWrap}>
-        <Pressable style={styles.interaction} onPress={() => navigation.navigate('comments', comments)}>
+        <Pressable style={styles.interaction} onPress={() => navigation.navigate('comments', {id,photo})}>
           <FontAwesome name="comment" style={styles.interactionIcon} size={24}  />
-          <Text>{ comments }</Text>
         </Pressable>
         {like ? (<View style={[styles.interaction, { marginLeft: 24 }]}>
           <AntDesign name="like2" size={24} style={styles.interactionIcon} />
