@@ -6,7 +6,6 @@ import {
   TextInput,
   SafeAreaView,
   TouchableOpacity,
-  ImageBackground,
   Keyboard,
   Pressable,
   KeyboardAvoidingView
@@ -14,11 +13,13 @@ import {
 import { ValidateEmail } from "../helpers/validate";
 import { useDispatch } from "react-redux";
 import { register } from "../redux/auth/operations";
+import UserPhoto from "./UserPhoto";
 
 export default function RegistrationForm({navigation}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [photo, setPhoto] = useState(null);
   const [isHiddenPass, setIsHiddenPass] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const dispatch = useDispatch();
@@ -51,14 +52,7 @@ export default function RegistrationForm({navigation}) {
 
   return (
     <View style={styles.formContainer}>
-      <View style={styles.imgWrap}>
-        <TouchableOpacity style={styles.addBtn}>
-          <ImageBackground
-            source={require("../assets/imgs/add.png")}
-            resizeMode="cover"
-            style={styles.addBtnBg}></ImageBackground>
-        </TouchableOpacity>
-      </View>
+      <UserPhoto style={styles.avatar} photo={photo} setPhoto={setPhoto}/>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -131,28 +125,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     marginTop:60
   },
-
-  imgWrap: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#F6F6F6',
+  avatar: {
     position: 'absolute',
-    top: -62,
-    alignSelf: "center",
-    borderRadius: 16,
-  },
-
-  addBtn: {
-    position: "absolute",
-    bottom: 14,
-    right: -12,
-    width: 25,
-    height: 25,
-  },
-
-  addBtnBg: {
-    flex: 1,
-    justifyContent: 'center',
+    top: -60,
   },
   
   formTitle: {
